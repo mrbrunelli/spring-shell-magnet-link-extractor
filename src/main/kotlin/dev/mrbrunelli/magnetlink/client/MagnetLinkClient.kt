@@ -15,7 +15,7 @@ class MagnetLinkClient {
         for (linkElement in linkElements) {
             val href = linkElement.attr("href")
             if (href.startsWith("magnet:?xt", ignoreCase = true)) {
-                val title = getTitle(href)
+                val title = extractTitle(href)
                 if (title.isNotEmpty()) {
                     links.add(MagnetLink(title = title, link = href))
                 }
@@ -25,9 +25,8 @@ class MagnetLinkClient {
         return links
     }
 
-    private fun getTitle(link: String): String {
-        val regex = Regex("dn=(.*?)&")
-        return when (val title = regex.find(link)?.groups?.get(1)?.value) {
+    private fun extractTitle(link: String): String {
+        return when (val title = Regex("dn=(.*?)&").find(link)?.groups?.get(1)?.value) {
             null -> ""
             else -> URLDecoder.decode(title, "UTF-8")
         }
